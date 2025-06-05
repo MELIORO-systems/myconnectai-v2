@@ -1,45 +1,29 @@
 // Konfigurace aplikace - My AI Chat
-// Verze: 2.0 - Multi-Model Support
+// Verze: 2.1 - Models Registry Support
 
 const CONFIG = {
     // === ZÁKLADNÍ NASTAVENÍ ===
-    VERSION: "2.0",
+    VERSION: "2.1",
     LAST_UPDATE: new Date().toISOString(),
     
     // === REŽIM APLIKACE ===
     MODE: "agent", // "knowledge" nebo "agent" - NASTAVENO NA AGENT
     
-    // === MODELY - NOVÁ SEKCE ===
+    // === DEBUG MODE ===
+    DEBUG_MODE: false, // true = vypíše detailní informace o modelech do konzole
+    
+    // === VISIBLE MODELS - WHITELIST ===
+    // Určuje které modely budou viditelné v UI
+    // Pokud je prázdné pole, použije se výchozí viditelnost z models-registry.js
+    VISIBLE_MODELS: ["gpt-3.5-turbo", "gpt-4o-mini"], // Whitelist viditelných modelů
+    
+    // === MODELY - ZJEDNODUŠENÁ KONFIGURACE ===
     MODELS: {
-        // Dostupné modely
-        AVAILABLE: [
-            'gpt-3.5-turbo',
-            'gpt-4',
-            'gpt-4-turbo-preview',
-            'gpt-4o-mini'  // PŘIDÁN GPT-4o-mini
-        ],
-        
-        // Výchozí model
-        DEFAULT: 'gpt-4o-mini', // ZMĚNĚNO na gpt-4o-mini
+        // Výchozí model - musí být v VISIBLE_MODELS
+        DEFAULT: 'gpt-4o-mini',
         
         // Fallback chain - záložní modely při selhání
-        FALLBACK_CHAIN: ['gpt-4o-mini', 'gpt-3.5-turbo'],
-        
-        // Konfigurace jednotlivých modelů
-        CONFIGS: {
-            'gpt-3.5-turbo': {
-                name: 'GPT-3.5 Turbo'
-            },
-            'gpt-4': {
-                name: 'GPT-4'
-            },
-            'gpt-4-turbo-preview': {
-                name: 'GPT-4 Turbo'
-            },
-            'gpt-4o-mini': {
-                name: 'GPT-4o Mini'
-            }
-        }
+        FALLBACK_CHAIN: ['gpt-4o-mini', 'gpt-3.5-turbo']
     },
     
     // === PROXY NASTAVENÍ ===
@@ -48,7 +32,6 @@ const CONFIG = {
         ENDPOINTS: {
             KNOWLEDGE: "/knowledge",
             AGENT: "/agent",
-            // Připraveno pro budoucí endpointy
             CHAT: "/api/chat" // Univerzální endpoint pro všechny modely
         }
     },
@@ -57,7 +40,6 @@ const CONFIG = {
     API: {
         OPENAI: {
             SYSTEM_PROMPT: "Jsi přátelský a nápomocný AI asistent společnosti MELIORO Systems. Odpovídáš v češtině, pokud není požadováno jinak.",
-            MODEL: "gpt-3.5-turbo", // Nyní se bere z MODELS.DEFAULT
             TEMPERATURE: 0.7,
             MAX_TOKENS: 2048
         }
@@ -72,7 +54,7 @@ const CONFIG = {
     // === KNOWLEDGE BASE ===
     KNOWLEDGE_BASE: {
         ENABLED: true,
-        FILE_PREFIX: "knowledge-", // Opraveno - soubory jsou v root
+        FILE_PREFIX: "knowledge-", // Soubory jsou v root
         FILES: [
             { name: "company", description: "Informace o společnosti" },
             { name: "services", description: "Naše služby" },
@@ -166,4 +148,4 @@ Object.freeze(CONFIG);
 // Explicitní export do window objektu
 window.CONFIG = CONFIG;
 
-console.log('📋 Config loaded - Multi-Model Edition v' + CONFIG.VERSION);
+console.log('📋 Config loaded - Models Registry Edition v' + CONFIG.VERSION);
