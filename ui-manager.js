@@ -72,31 +72,19 @@ class UIManager {
         const models = window.modelManager?.getAvailableModels() || [];
         const activeModelId = window.modelManager?.getActiveModel()?.id || CONFIG.MODELS.DEFAULT;
         
-        // Vytvořit HTML
-        let selectorHTML = `<div class="model-selector-wrapper">`;
+        // Vytvořit HTML - jednoduchý select jako tlačítko
+        let selectorHTML = `
+            <select class="model-button" id="model-select" onchange="window.changeModel(this.value)" title="Vyberte AI model">
+        `;
         
-        // Indikátor aktuálního modelu
-        selectorHTML += `<span class="current-model-indicator" id="current-model-indicator">🤖</span>`;
-        
-        // Dropdown
-        selectorHTML += `<select class="model-select" id="model-select" onchange="window.changeModel(this.value)" title="Vyberte AI model">`;
-        
-        // Přidat modely
+        // Přidat modely - pouze názvy
         models.forEach(model => {
-            const config = CONFIG.MODELS.CONFIGS[model.id] || {};
             const selected = model.id === activeModelId ? 'selected' : '';
-            const emoji = config.emoji || '🤖';
-            const name = config.name || model.name;
-            
-            selectorHTML += `<option value="${model.id}" ${selected}>${emoji} ${name}</option>`;
+            const name = model.name || model.id;
+            selectorHTML += `<option value="${model.id}" ${selected}>${name}</option>`;
         });
         
         selectorHTML += `</select>`;
-        
-        // Info o ceně
-        selectorHTML += `<span class="model-info" id="model-info" title="Odhadovaná cena za 1000 tokenů"></span>`;
-        
-        selectorHTML += `</div>`;
         
         modelSelector.innerHTML = selectorHTML;
         
@@ -105,31 +93,16 @@ class UIManager {
     
     // Aktualizovat indikátor modelu
     updateModelIndicator(modelId = null) {
-        const indicator = document.getElementById('current-model-indicator');
         const select = document.getElementById('model-select');
-        const info = document.getElementById('model-info');
         
-        if (!indicator || !select) return;
+        if (!select) return;
         
         // Získat info o modelu
         const currentModelId = modelId || window.modelManager?.getActiveModel()?.id;
-        const modelInfo = window.modelManager?.getModelInfo(currentModelId);
-        const config = CONFIG.MODELS.CONFIGS[currentModelId] || {};
         
-        if (modelInfo) {
-            // Update indicator
-            indicator.textContent = config.emoji || '🤖';
-            indicator.style.color = config.color || 'var(--primary-color)';
-            
+        if (currentModelId) {
             // Update select
             select.value = currentModelId;
-            
-            // Update info
-            if (info && modelInfo.pricing) {
-                const avgPrice = (modelInfo.pricing.input + modelInfo.pricing.output) / 2;
-                info.textContent = `💰 $${avgPrice.toFixed(3)}/1K`;
-                info.title = `Input: $${modelInfo.pricing.input}/1K, Output: $${modelInfo.pricing.output}/1K`;
-            }
         }
     }
     
