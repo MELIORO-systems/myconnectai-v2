@@ -1,5 +1,5 @@
 // OpenAI Model Implementation
-// Verze: 1.0
+// Verze: 1.1 - Upraveno pro Models Registry
 
 class OpenAIModel {
     constructor(modelId, config = {}) {
@@ -17,19 +17,6 @@ class OpenAIModel {
         
         // Capabilities
         this.capabilities = config.capabilities || ['chat'];
-        
-        // Pricing (per 1K tokens)
-        this.pricing = config.pricing || {
-            input: 0.0005,
-            output: 0.0015
-        };
-        
-        // Usage stats
-        this.stats = {
-            messages: 0,
-            tokens: 0,
-            cost: 0
-        };
         
         // Knowledge base for knowledge mode
         this.knowledgeBase = '';
@@ -150,11 +137,6 @@ class OpenAIModel {
         }
         
         const data = await response.json();
-        
-        // Update stats
-        if (data.usage) {
-            this.updateStats(data.usage);
-        }
         
         console.log('✅ Response received successfully');
         return data.choices[0].message.content;
@@ -304,21 +286,6 @@ class OpenAIModel {
         return responseText;
     }
 
-    // Update statistik
-    updateStats(usage) {
-        if (!usage) return;
-        
-        this.stats.messages++;
-        this.stats.tokens += (usage.total_tokens || 0);
-        
-        // Vypočítat cenu
-        const inputCost = ((usage.prompt_tokens || 0) / 1000) * this.pricing.input;
-        const outputCost = ((usage.completion_tokens || 0) / 1000) * this.pricing.output;
-        this.stats.cost += inputCost + outputCost;
-        
-        console.log(`📊 Usage: ${usage.total_tokens} tokens, $${(inputCost + outputCost).toFixed(4)}`);
-    }
-
     // Validace konfigurace
     validateConfig() {
         const issues = [];
@@ -338,75 +305,8 @@ class OpenAIModel {
         
         return issues;
     }
-
-    // Získat statistiky
-    getStats() {
-        return { ...this.stats };
-    }
-
-    // Reset statistik
-    resetStats() {
-        this.stats = {
-            messages: 0,
-            tokens: 0,
-            cost: 0
-        };
-    }
 }
 
-// Registrace OpenAI modelů
-if (window.modelManager) {
-    // GPT-3.5 Turbo
-    window.modelManager.registerModel('gpt-3.5-turbo', new OpenAIModel('gpt-3.5-turbo', {
-        name: 'GPT-3.5 Turbo',
-        description: 'Rychlý a cenově efektivní model',
-        contextWindow: 16384,
-        maxTokens: 4096,
-        capabilities: ['chat', 'analysis'],
-        pricing: {
-            input: 0.0005,
-            output: 0.0015
-        }
-    }));
+// NEREGISTROVAT MODELY MANUÁLNĚ - Model Loader to udělá automaticky
 
-    // GPT-4
-    window.modelManager.registerModel('gpt-4', new OpenAIModel('gpt-4', {
-        name: 'GPT-4',
-        description: 'Nejvýkonnější model pro komplexní úlohy',
-        contextWindow: 8192,
-        maxTokens: 4096,
-        capabilities: ['chat', 'analysis', 'reasoning', 'coding'],
-        pricing: {
-            input: 0.03,
-            output: 0.06
-        }
-    }));
-
-    // GPT-4 Turbo
-    window.modelManager.registerModel('gpt-4-turbo-preview', new OpenAIModel('gpt-4-turbo-preview', {
-        name: 'GPT-4 Turbo',
-        description: 'Rychlejší verze GPT-4 s větším kontextem',
-        contextWindow: 128000,
-        maxTokens: 4096,
-        capabilities: ['chat', 'analysis', 'reasoning', 'coding', 'vision'],
-        pricing: {
-            input: 0.01,
-            output: 0.03
-        }
-    }));
-
-    // GPT-4o Mini
-    window.modelManager.registerModel('gpt-4o-mini', new OpenAIModel('gpt-4o-mini', {
-        name: 'GPT-4o Mini',
-        description: 'Optimalizovaná verze GPT-4 pro rychlé odpovědi',
-        contextWindow: 128000,
-        maxTokens: 4096,
-        capabilities: ['chat', 'analysis', 'reasoning'],
-        pricing: {
-            input: 0.00015,  // $0.15 / 1M tokens
-            output: 0.0006   // $0.60 / 1M tokens
-        }
-    }));
-}
-
-console.log('📦 OpenAI models loaded');
+console.log('📦 OpenAI model class loaded');
