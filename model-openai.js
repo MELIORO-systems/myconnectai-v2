@@ -384,6 +384,19 @@ if (window.modelManager) {
             output: 0.03
         }
     }));
+
+    // GPT-4o Mini
+    window.modelManager.registerModel('gpt-4o-mini', new OpenAIModel('gpt-4o-mini', {
+        name: 'GPT-4o Mini',
+        description: 'Optimalizovaná verze GPT-4 pro rychlé odpovědi',
+        contextWindow: 128000,
+        maxTokens: 4096,
+        capabilities: ['chat', 'analysis', 'reasoning'],
+        pricing: {
+            input: 0.00015,  // $0.15 / 1M tokens
+            output: 0.0006   // $0.60 / 1M tokens
+        }
+    }));
 }
 
 console.log('📦 OpenAI models loaded');
