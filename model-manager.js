@@ -1,5 +1,5 @@
 // Model Manager - Centrální správa AI modelů
-// Verze: 1.0
+// Verze: 1.1 - Upraveno pro Models Registry
 
 class ModelManager {
     constructor() {
@@ -20,16 +20,40 @@ class ModelManager {
         
         console.log('🤖 Initializing Model Manager...');
         
+        // Model Loader už zaregistroval modely, jen nastavíme aktivní model
+        
         // Načíst uložený model nebo použít výchozí
         const savedModel = localStorage.getItem('selectedModel');
         const defaultModel = window.CONFIG?.MODELS?.DEFAULT || 'gpt-3.5-turbo';
         const modelToUse = savedModel || defaultModel;
         
-        // Nastavit aktivní model
-        await this.setActiveModel(modelToUse);
+        // Ověřit že model je viditelný
+        const model = this.models.get(modelToUse);
+        if (model && model.visible) {
+            await this.setActiveModel(modelToUse);
+        } else {
+            // Najít první viditelný model
+            const visibleModel = this.getFirstVisibleModel();
+            if (visibleModel) {
+                console.log(`⚠️ Requested model '${modelToUse}' not visible, using '${visibleModel.id}'`);
+                await this.setActiveModel(visibleModel.id);
+            } else {
+                console.error('❌ No visible models available!');
+            }
+        }
         
         this.initialized = true;
         console.log('✅ Model Manager ready');
+    }
+
+    // Najít první viditelný model
+    getFirstVisibleModel() {
+        for (const [id, model] of this.models) {
+            if (model.visible) {
+                return { id, model };
+            }
+        }
+        return null;
     }
 
     // Nastavit aktivní model
@@ -39,9 +63,15 @@ class ModelManager {
             return false;
         }
 
-        console.log(`🔄 Switching to model: ${modelId}`);
-        
         const model = this.models.get(modelId);
+        
+        // Kontrola viditelnosti
+        if (!model.visible) {
+            console.error(`❌ Model not visible: ${modelId}`);
+            return false;
+        }
+
+        console.log(`🔄 Switching to model: ${modelId}`);
         
         // Inicializovat model pokud je potřeba
         if (model.initialize && !model.initialized) {
@@ -103,11 +133,18 @@ class ModelManager {
             if (fallbackId === this.activeModel) continue; // Skip failed model
             
             if (this.models.has(fallbackId)) {
+                const fallbackModel = this.models.get(fallbackId);
+                
+                // Kontrola že fallback model je viditelný
+                if (!fallbackModel.visible) {
+                    console.log(`⏭️ Fallback model '${fallbackId}' not visible, skipping`);
+                    continue;
+                }
+                
                 console.log(`🔄 Trying fallback model: ${fallbackId}`);
                 
                 try {
-                    const model = this.models.get(fallbackId);
-                    const response = await model.sendMessage(messages, {
+                    const response = await fallbackModel.sendMessage(messages, {
                         ...options,
                         allowFallback: false // Prevent infinite loop
                     });
@@ -138,9 +175,9 @@ class ModelManager {
             provider: model.provider || 'unknown',
             description: model.description || '',
             capabilities: model.capabilities || [],
-            pricing: model.pricing || null,
             contextWindow: model.contextWindow || null,
-            isActive: id === this.activeModel
+            isActive: id === this.activeModel,
+            visible: model.visible || false
         };
     }
 
@@ -149,7 +186,10 @@ class ModelManager {
         const models = [];
         
         for (const [id, model] of this.models) {
-            models.push(this.getModelInfo(id));
+            // Vrátit pouze viditelné modely
+            if (model.visible) {
+                models.push(this.getModelInfo(id));
+            }
         }
         
         return models;
@@ -164,9 +204,15 @@ class ModelManager {
             issues.push('No models registered');
         }
         
+        // Kontrola viditelných modelů
+        const visibleModels = this.getAvailableModels();
+        if (visibleModels.length === 0) {
+            issues.push('No visible models available');
+        }
+        
         // Kontrola API klíčů
         for (const [id, model] of this.models) {
-            if (model.validateConfig) {
+            if (model.validateConfig && model.visible) {
                 const modelIssues = model.validateConfig();
                 if (modelIssues && modelIssues.length > 0) {
                     issues.push(`Model ${id}: ${modelIssues.join(', ')}`);
@@ -176,41 +222,9 @@ class ModelManager {
         
         return issues;
     }
-
-    // Získat statistiky použití
-    getUsageStats() {
-        const stats = {
-            totalMessages: 0,
-            totalTokens: 0,
-            estimatedCost: 0,
-            modelUsage: {}
-        };
-        
-        // Agregovat statistiky ze všech modelů
-        for (const [id, model] of this.models) {
-            if (model.getStats) {
-                const modelStats = model.getStats();
-                stats.modelUsage[id] = modelStats;
-                stats.totalMessages += modelStats.messages || 0;
-                stats.totalTokens += modelStats.tokens || 0;
-                stats.estimatedCost += modelStats.cost || 0;
-            }
-        }
-        
-        return stats;
-    }
-
-    // Reset statistik
-    resetStats() {
-        for (const [id, model] of this.models) {
-            if (model.resetStats) {
-                model.resetStats();
-            }
-        }
-    }
 }
 
 // Vytvořit globální instanci
 window.modelManager = new ModelManager();
 
-console.log('📦 Model Manager loaded');
+console.log('📦 Model Manager loaded (Registry Edition)');
