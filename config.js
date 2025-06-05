@@ -7,7 +7,7 @@ const CONFIG = {
     LAST_UPDATE: new Date().toISOString(),
     
     // === REŽIM APLIKACE ===
-    MODE: "agent", // "knowledge" nebo "agent"
+    MODE: "agent", // "knowledge" nebo "agent" - NASTAVENO NA AGENT
     
     // === MODELY - NOVÁ SEKCE ===
     MODELS: {
@@ -15,35 +15,29 @@ const CONFIG = {
         AVAILABLE: [
             'gpt-3.5-turbo',
             'gpt-4',
-            'gpt-4-turbo-preview'
-            // Další modely budou přidány později:
-            // 'claude-3-opus',
-            // 'claude-3-sonnet',
-            // 'gemini-pro'
+            'gpt-4-turbo-preview',
+            'gpt-4o-mini'  // PŘIDÁN GPT-4o-mini
         ],
         
         // Výchozí model
-        DEFAULT: 'gpt-3.5-turbo',
+        DEFAULT: 'gpt-4o-mini', // ZMĚNĚNO na gpt-4o-mini
         
         // Fallback chain - záložní modely při selhání
-        FALLBACK_CHAIN: ['gpt-3.5-turbo', 'gpt-4'],
+        FALLBACK_CHAIN: ['gpt-4o-mini', 'gpt-3.5-turbo'],
         
         // Konfigurace jednotlivých modelů
         CONFIGS: {
             'gpt-3.5-turbo': {
-                name: 'GPT-3.5 Turbo',
-                emoji: '⚡',
-                color: '#10a37f'
+                name: 'GPT-3.5 Turbo'
             },
             'gpt-4': {
-                name: 'GPT-4',
-                emoji: '🧠',
-                color: '#6e40c9'
+                name: 'GPT-4'
             },
             'gpt-4-turbo-preview': {
-                name: 'GPT-4 Turbo',
-                emoji: '🚀',
-                color: '#ff6b6b'
+                name: 'GPT-4 Turbo'
+            },
+            'gpt-4o-mini': {
+                name: 'GPT-4o Mini'
             }
         }
     },
