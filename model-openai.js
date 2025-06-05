@@ -103,8 +103,13 @@ class OpenAIModel {
     async sendViaKnowledge(messages, options = {}) {
         console.log(`💬 OpenAI Knowledge mode: ${this.id}`);
         
+        // Zkontrolovat že CONFIG existuje
+        if (!window.CONFIG) {
+            throw new Error('CONFIG not found');
+        }
+        
         // Sestavit systémový prompt s knowledge base
-        let systemPrompt = window.CONFIG?.API?.OPENAI?.SYSTEM_PROMPT || 'You are a helpful assistant.';
+        let systemPrompt = window.CONFIG.API?.OPENAI?.SYSTEM_PROMPT || 'You are a helpful assistant.';
         if (this.knowledgeBase) {
             systemPrompt = `${systemPrompt}\n\n${this.knowledgeBase}`;
         }
@@ -318,11 +323,16 @@ class OpenAIModel {
     validateConfig() {
         const issues = [];
         
-        if (!window.CONFIG?.PROXY?.URL) {
+        if (!window.CONFIG) {
+            issues.push('CONFIG not loaded');
+            return issues;
+        }
+        
+        if (!window.CONFIG.PROXY?.URL) {
             issues.push('Missing proxy URL');
         }
         
-        if (window.CONFIG?.MODE === 'agent' && !window.CONFIG?.AGENT?.AGENT_ID) {
+        if (window.CONFIG.MODE === 'agent' && !window.CONFIG.AGENT?.AGENT_ID) {
             issues.push('Agent mode enabled but no Agent ID configured');
         }
         
