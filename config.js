@@ -90,9 +90,9 @@ const CONFIG = {
     
     // === UI NASTAVENÍ ===
     UI: {
-        PAGE_TITLE: "My AI Chat - MELIORO Systems",
-        APP_TITLE: "My AI Chat",
-        APP_SUBTITLE: "Váš inteligentní asistent",
+        PAGE_TITLE: "MyConnectAI v2 - Multi-Model Chat",
+        APP_TITLE: "MyConnectAI v2",
+        APP_SUBTITLE: "Multi-Model AI Assistant",
         
         // Tlačítka a vstupy
         SEND_BUTTON_TEXT: "Odeslat",
