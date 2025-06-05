@@ -163,4 +163,7 @@ const CONFIG = {
 // Zmrazit konfiguraci proti změnám
 Object.freeze(CONFIG);
 
+// Explicitní export do window objektu
+window.CONFIG = CONFIG;
+
 console.log('📋 Config loaded - Multi-Model Edition v' + CONFIG.VERSION);
