@@ -57,11 +57,6 @@ async function sendMessage() {
         }
         messages.push({ role: 'assistant', content: response });
         
-        // Zobrazit statistiky (pokud je povoleno)
-        if (CONFIG.SHOW_STATS) {
-            displayStats();
-        }
-        
     } catch (error) {
         console.error('❌ Error:', error);
         let errorMessage = CONFIG.MESSAGES.ERROR;
@@ -103,17 +98,6 @@ function checkRateLimit() {
     }
     
     return rateLimitCounter <= CONFIG.RATE_LIMITING.MAX_MESSAGES_PER_MINUTE;
-}
-
-// Zobrazení statistik
-function displayStats() {
-    const stats = window.modelManager?.getUsageStats();
-    if (!stats) return;
-    
-    console.log('📊 Chat Statistics:');
-    console.log(`  Messages: ${stats.totalMessages}`);
-    console.log(`  Tokens: ${stats.totalTokens}`);
-    console.log(`  Estimated cost: $${stats.estimatedCost.toFixed(4)}`);
 }
 
 // Změna modelu (volá se z UI)
