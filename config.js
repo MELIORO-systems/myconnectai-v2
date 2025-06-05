@@ -7,7 +7,7 @@ const CONFIG = {
     LAST_UPDATE: new Date().toISOString(),
     
     // === REŽIM APLIKACE ===
-    MODE: "knowledge", // "knowledge" nebo "agent"
+    MODE: "agent", // "knowledge" nebo "agent"
     
     // === MODELY - NOVÁ SEKCE ===
     MODELS: {
