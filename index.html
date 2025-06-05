@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <!-- SKRIPTY - Multi-Model verze -->
+    <!-- SKRIPTY - Multi-Model verze s Models Registry -->
     
     <!-- 1. Konfigurace - MUSÍ BÝT PRVNÍ -->
     <script src="config.js"></script>
@@ -78,23 +78,29 @@
         }
     </script>
     
-    <!-- 3. Model Manager -->
+    <!-- 3. Models Registry - NOVÉ -->
+    <script src="models-registry.js"></script>
+    
+    <!-- 4. Model Manager -->
     <script src="model-manager.js"></script>
     
-    <!-- 4. Model implementace -->
+    <!-- 5. Model implementace -->
     <script src="model-openai.js"></script>
     <!-- Budoucí modely:
     <script src="model-claude.js"></script>
     <script src="model-gemini.js"></script>
     -->
     
-    <!-- 5. UI Manager -->
+    <!-- 6. Model Loader - NOVÉ -->
+    <script src="model-loader.js"></script>
+    
+    <!-- 7. UI Manager -->
     <script src="ui-manager.js"></script>
     
-    <!-- 6. Hlavní aplikace -->
+    <!-- 8. Hlavní aplikace -->
     <script src="main.js"></script>
     
-    <!-- 6. Inicializace -->
+    <!-- 9. Inicializace -->
     <script>
         // Nastavit texty z konfigurace při načtení
         document.addEventListener('DOMContentLoaded', function() {
@@ -180,7 +186,7 @@
             }
         });
         
-        console.log('🚀 My AI Chat Multi-Model loaded');
+        console.log('🚀 My AI Chat Multi-Model with Registry loaded');
     </script>
 </body>
 </html>
