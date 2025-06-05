@@ -65,23 +65,33 @@
 
     <!-- SKRIPTY - Multi-Model verze -->
     
-    <!-- 1. Konfigurace -->
+    <!-- 1. Konfigurace - MUSÍ BÝT PRVNÍ -->
     <script src="config.js"></script>
     
-    <!-- 2. Model Manager -->
+    <!-- 2. Počkat na načtení CONFIG -->
+    <script>
+        // Ověřit že CONFIG je načten
+        if (typeof CONFIG === 'undefined') {
+            console.error('❌ CONFIG failed to load!');
+        } else {
+            console.log('✅ CONFIG loaded successfully');
+        }
+    </script>
+    
+    <!-- 3. Model Manager -->
     <script src="model-manager.js"></script>
     
-    <!-- 3. Model implementace -->
+    <!-- 4. Model implementace -->
     <script src="model-openai.js"></script>
     <!-- Budoucí modely:
     <script src="model-claude.js"></script>
     <script src="model-gemini.js"></script>
     -->
     
-    <!-- 4. UI Manager -->
+    <!-- 5. UI Manager -->
     <script src="ui-manager.js"></script>
     
-    <!-- 5. Hlavní aplikace -->
+    <!-- 6. Hlavní aplikace -->
     <script src="main.js"></script>
     
     <!-- 6. Inicializace -->
